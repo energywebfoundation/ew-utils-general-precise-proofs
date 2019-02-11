@@ -1,10 +1,26 @@
+// Copyright 2018 Energy Web Foundation
+// This file is part of the Origin Application brought to you by the Energy Web Foundation,
+// a global non-profit organization focused on accelerating blockchain technology across the energy sector,
+// incorporated in Zug, Switzerland.
+//
+// The Origin Application is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+// This is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY and without an implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details, at <http://www.gnu.org/licenses/>.
+//
+// @authors: slock.it GmbH; Heiko Burkhardt, heiko.burkhardt@slock.it; Martin Kuechler, martin.kuchler@slock.it
+
 import { sha3, bufferToHex } from 'ethereumjs-util'
 import { printMerkleTree } from './debug';
 
 
 export namespace PreciseProofs {
     export const printTree = printMerkleTree
-    
+
     export interface Leaf {
         key: string
         value: string
@@ -16,7 +32,7 @@ export namespace PreciseProofs {
         key: string
         value: string
         salt: string
-        schemaHash?: string 
+        schemaHash?: string
         proofPath: any[]
     }
 
@@ -27,11 +43,11 @@ export namespace PreciseProofs {
     const getRandomString = (length: number) => {
         var random = ''
         var possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
-    
+
         for (var i = 0; i < length; i++) {
             random += possible.charAt(Math.floor(Math.random() * possible.length))
         }
-    
+
         return random
 
     }
@@ -44,7 +60,7 @@ export namespace PreciseProofs {
     }
 
     const sortSchema = (schema: string[]): string[] => {
-        return schema  
+        return schema
             .map( key => hash(key))
             .sort()
             .map(keyHash => schema.find(key => keyHash === hash(key)))
@@ -61,7 +77,7 @@ export namespace PreciseProofs {
                 return JSON.stringify(value)
             default:
                 throw new Error('Unsupported value type ' + type)
-            
+
         }
 
     }
@@ -72,30 +88,30 @@ export namespace PreciseProofs {
 
         while (lowerLevel.length > 1) {
             const newLevel = []
-        
+
             for(let i = 0; i < lowerLevel.length - 1; i = i + 2 ) {
                 newLevel.push(hash(lowerLevel[i] +  lowerLevel[i+1]))
             }
 
             tree.push(newLevel)
 
-            lowerLevel = tree.length > 1 && lowerLevel.length % 2 != 0  ? 
-                newLevel.concat(lowerLevel[lowerLevel.length - 1]) : 
+            lowerLevel = tree.length > 1 && lowerLevel.length % 2 != 0  ?
+                newLevel.concat(lowerLevel[lowerLevel.length - 1]) :
                 newLevel
-            
+
         }
-        
+
         return tree
     }
 
     export const hashSchema = (schema: string[]): string => {
         return hash(schema.reduce((aggregated, value) => aggregated + value))
-    } 
+    }
 
     export const createExtendedTreeRootHash = (merkleTreeRootHash: string, schema: string[]): string => {
 
         return hash(merkleTreeRootHash + hashSchema(sortSchema(schema)))
-        
+
     }
 
     export const createLeafs = (inputObject: any, salts?: string[]): Leaf[]  => {
@@ -109,7 +125,7 @@ export namespace PreciseProofs {
             const canonizedValue = canonizeValue(inputObject[key])
             const salt = salts ? salts[index] : getRandomString(16)
             const hashValue = hash(key + canonizedValue + salt)
-            
+
             return {
                 key: key,
                 value: canonizedValue,
@@ -123,14 +139,14 @@ export namespace PreciseProofs {
 
         const merkleTreePath = []
         let currentHash = leafToProof.hash
-        let remainder = [] 
+        let remainder = []
 
         for(let i = 0; i < merkleTree.length - 1; i++) {
             const currentLevel: string[] = merkleTree[i].concat(remainder)
             const index = currentLevel.findIndex( hash => hash === currentHash)
 
             if (index + 1 < currentLevel.length || currentLevel.length % 2 === 0) {
-                let pathElement 
+                let pathElement
                 if( index % 2 === 0 ) {
                     pathElement = currentLevel[index + 1]
                     merkleTreePath.push({right: pathElement})
@@ -139,7 +155,7 @@ export namespace PreciseProofs {
                     merkleTreePath.push({left: pathElement})
                 }
                 currentHash = merkleTree[i + 1][Math.floor(index / 2)]
-            } 
+            }
 
             remainder = currentLevel.length % 2 === 1 ? [currentLevel[currentLevel.length - 1]] : []
 
@@ -160,7 +176,7 @@ export namespace PreciseProofs {
         const sortedLeafs = sortLeafsByKey(leafs)
         const merkleTree = existingMerkleTree ? existingMerkleTree : createMerkleTree(sortedLeafs.map((leaf: Leaf) => leaf.hash))
         const leafToProof = findLeaf(sortedLeafs, key)
-        
+
 
         const proof = {
             key: key,
@@ -169,15 +185,15 @@ export namespace PreciseProofs {
             proofPath: creatPath(merkleTree, leafToProof)
         }
 
-        return withSchema ? { 
-            ...proof, 
+        return withSchema ? {
+            ...proof,
             schemaHash: hashSchema(sortedLeafs.map((leaf: Leaf) => leaf.key))
         } : proof
 
     }
     const pathForPostion = (schemaLength: number, position: number) => {
         const positions = Array(schemaLength).fill(null).map((element, index) => ({
-            
+
             key: index.toString(),
             value: null,
             salt: null,
@@ -207,16 +223,16 @@ export namespace PreciseProofs {
         //TODO prevent duplicate keys in schema
         let currentHash = hash(proof.key + proof.value + proof.salt)
         let position = ''
-        
-        
+
+
         for(let i = 0; i < proof.proofPath.length; i++) {
             const currentPathElement = proof.proofPath[i]
             if (currentPathElement.right) {
                 currentHash = hash(currentHash + currentPathElement.right)
-                position = '0' + position 
+                position = '0' + position
             } else if (currentPathElement.left) {
                 currentHash = hash(currentPathElement.left + currentHash)
-                position = '1' + position 
+                position = '1' + position
             } else {
                 throw new Error('Invalid proof path element')
             }

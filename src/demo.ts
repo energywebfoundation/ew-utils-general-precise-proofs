@@ -1,3 +1,19 @@
+// Copyright 2018 Energy Web Foundation
+// This file is part of the Origin Application brought to you by the Energy Web Foundation,
+// a global non-profit organization focused on accelerating blockchain technology across the energy sector,
+// incorporated in Zug, Switzerland.
+//
+// The Origin Application is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+// This is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY and without an implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details, at <http://www.gnu.org/licenses/>.
+//
+// @authors: slock.it GmbH; Heiko Burkhardt, heiko.burkhardt@slock.it; Martin Kuechler, martin.kuchler@slock.it
+
 import {PreciseProofs} from './'
 import { printMerkleTree } from './debug';
 
@@ -27,7 +43,7 @@ console.log('\n\n### Object ###\n')
 console.log(test)
 
 console.log('\n\n### Leafs ###\n')
-const leafs = PreciseProofs.createLeafs(test) 
+const leafs = PreciseProofs.createLeafs(test)
 
 console.log(leafs)
 
@@ -58,7 +74,7 @@ console.log(PreciseProofs.verifyProof(extendedTreeHash, extendedProof, schema))
 
 console.log('\n\n### Identical key attack ###\n')
 
-const leafs2 = PreciseProofs.createLeafs(test) 
+const leafs2 = PreciseProofs.createLeafs(test)
 leafs2[0] = {
     key: 'country',
     value: 'gb',
@@ -68,6 +84,3 @@ leafs2[0] = {
 
 const merkleTree2 = PreciseProofs.createMerkleTree(leafs2.map((leaf: PreciseProofs.Leaf) => leaf.hash))
 printMerkleTree(merkleTree2, leafs2, leafs2.map((leaf: PreciseProofs.Leaf) => leaf.key))
-
-
-
