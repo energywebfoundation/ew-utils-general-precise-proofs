@@ -14,14 +14,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/slockit/precise-proofs.git"
+    "url": "git+https://github.com/energywebfoundation/ew-utils-general-precise-proofs.git"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "slock.it GmbH; Martin Kuechler, martin.kuechler@slock.it; Heiko Burkhardt, heiko.burkhardt@slock.it",
+  "license": "GPL-3.0",
   "bugs": {
-    "url": "https://github.com/slockit/precise-proofs/issues"
+    "url": "https://github.com/energywebfoundation/ew-utils-general-precise-proofs"
   },
-  "homepage": "https://github.com/slockit/precise-proofs#readme",
+  "homepage": "https://github.com/energywebfoundation/ew-utils-general-precise-proofs#readme",
   "dependencies": {
     "@types/chai": "^4.1.4",
     "@types/colors": "^1.2.1",
