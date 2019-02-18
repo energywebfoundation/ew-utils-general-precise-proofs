@@ -47,7 +47,7 @@ push-to-slockit-registry:
     - npm --no-git-tag-version -f version $CI_COMMIT_TAG --allow-same-version
     - npm publish
   
-  push-to-github:
+push-to-github:
   stage: deploy
   variables:
     GITHUB_REPO_NAME: ew-utils-general-precise-proofs
