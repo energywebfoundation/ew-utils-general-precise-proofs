@@ -1,4 +1,10 @@
 # precise-proofs
+
+## Warning
+
+This repository/package is not designed for productive usage. Instead it should be used for demonstration and learning purposes.
+
+## general
 JSON: 
 ```
 { operationalSince: 0,
@@ -49,3 +55,5 @@ Proof:
      { right:
         '72114321d2844700bda3dff640045d54aae27abfdc792b66134ae67437c9c8bb' } ] }
 ```
+
+# 
